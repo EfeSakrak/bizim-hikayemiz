@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bizim Hikayemiz</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        roseGold: {
+                            50: '#fdf8f6',
+                            100: '#fbe8e3',
+                            200: '#f5d5cc',
+                            300: '#eeb8a9',
+                            400: '#e38f78',
+                            500: '#d56a4d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #fdf8f6;
+            color: #4a403a;
+        }
+        h1, h2, h3, .font-serif {
+            font-family: 'Playfair Display', serif;
+        }
+        .polaroid {
+            transition: all 0.3s ease;
+        }
+        .polaroid:hover {
+            transform: translateY(-5px) rotate(0deg) !important;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+</head>
+<body class="selection:bg-roseGold-200 selection:text-roseGold-900">
+
+    <!-- GİRİŞ KARŞILAMA EKRANI -->
+    <div id="welcomeOverlay" class="fixed inset-0 z-50 bg-stone-900/80 backdrop-blur-md flex items-center justify-center p-4 transition-opacity duration-700">
+        <div class="bg-white max-w-md w-full p-8 rounded-3xl shadow-2xl text-center space-y-6 border border-roseGold-100">
+            <div class="w-16 h-16 bg-roseGold-100 text-roseGold-500 rounded-full flex items-center justify-center mx-auto text-2xl animate-pulse">
+                <i class="fa-solid fa-heart"></i>
+            </div>
+            <div class="space-y-2">
+                <h2 class="text-2xl font-serif text-stone-800">Sana Bir Sürprizim Var</h2>
+                <p class="text-stone-500 text-sm font-light">Müziği başlatmak ve hikayemize adım atmak için kalbe dokun...</p>
+            </div>
+            <button onclick="startExperience()" class="w-full bg-roseGold-500 hover:bg-roseGold-400 text-white font-medium py-3.5 px-6 rounded-2xl shadow-lg shadow-roseGold-500/30 transition-all duration-300 flex items-center justify-center space-x-2 cursor-pointer">
+                <i class="fa-solid fa-play"></i>
+                <span>Hikayeyi Başlat</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Müzik Çalar Arka Plan (Yalın - Akşamüstü / Örnek Ses) -->
+    <audio id="bgMusic" loop>
+        <source src="https://www.bensound.com/bensound-music/bensound-tenderness.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Sabit Müzik Butonu -->
+    <div class="fixed bottom-6 right-6 z-40">
+        <button id="musicToggle" onclick="toggleMusic()" class="bg-white/80 backdrop-blur-md border border-roseGold-200 text-roseGold-500 hover:bg-roseGold-500 hover:text-white p-4 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center group cursor-pointer">
+            <i id="musicIcon" class="fa-solid fa-music text-xl"></i>
+            <span class="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs transition-all duration-500 ease-in-out text-sm font-medium pl-0 group-hover:pl-2">Akşamüstü - Yalın</span>
+        </button>
+    </div>
+
+    <!-- Hero Bölümü -->
+    <header class="min-h-screen flex flex-col items-center justify-center text-center px-4 relative overflow-hidden">
+        <div class="absolute inset-0 z-0 opacity-10 bg-[radial-gradient(#d56a4d_1px,transparent_1px)] [background-size:16px_16px]"></div>
+        
+        <div class="z-10 max-w-2xl mx-auto space-y-6">
+            <span class="text-roseGold-500 uppercase tracking-[0.3em] text-xs font-semibold px-4 py-1.5 bg-roseGold-100 rounded-full inline-block">Bizim Hikayemiz</span>
+            <h1 class="text-5xl md:text-7xl font-serif text-stone-800 leading-tight">İyi ki Varsın, <br><span class="italic font-normal text-roseGold-500">Sevgilim</span></h1>
+            <p class="text-stone-600 text-lg md:text-xl font-light max-w-lg mx-auto">Hayatımın en güzel melodisi, seninle geçen her anımız...</p>
+            
+            <!-- Sayaç -->
+            <div class="pt-6 grid grid-cols-4 gap-3 max-w-md mx-auto">
+                <div class="bg-white/70 backdrop-blur border border-roseGold-200/60 p-3 rounded-2xl shadow-sm">
+                    <span id="days" class="block text-2xl md:text-3xl font-serif font-semibold text-roseGold-500">0</span>
+                    <span class="text-xs text-stone-500 uppercase tracking-wider">Gün</span>
+                </div>
+                <div class="bg-white/70 backdrop-blur border border-roseGold-200/60 p-3 rounded-2xl shadow-sm">
+                    <span id="hours" class="block text-2xl md:text-3xl font-serif font-semibold text-roseGold-500">0</span>
+                    <span class="text-xs text-stone-500 uppercase tracking-wider">Saat</span>
+                </div>
+                <div class="bg-white/70 backdrop-blur border border-roseGold-200/60 p-3 rounded-2xl shadow-sm">
+                    <span id="minutes" class="block text-2xl md:text-3xl font-serif font-semibold text-roseGold-500">0</span>
+                    <span class="text-xs text-stone-500 uppercase tracking-wider">Dakika</span>
+                </div>
+                <div class="bg-white/70 backdrop-blur border border-roseGold-200/60 p-3 rounded-2xl shadow-sm">
+                    <span id="seconds" class="block text-2xl md:text-3xl font-serif font-semibold text-roseGold-500">0</span>
+                    <span class="text-xs text-stone-500 uppercase tracking-wider">Saniye</span>
+                </div>
+            </div>
+
+            <div class="pt-8">
+                <a href="#galeri" class="text-stone-400 hover:text-roseGold-500 transition-colors duration-300 inline-block animate-bounce">
+                    <i class="fa-solid fa-chevron-down text-xl"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Anı Galerisi -->
+    <section id="galeri" class="py-24 px-4 max-w-6xl mx-auto">
+        <div class="text-center space-y-3 mb-16">
+            <h2 class="text-3xl md:text-4xl font-serif text-stone-800">Güzel Anılarımız</h2>
+            <p class="text-stone-500 max-w-md mx-auto font-light">Birlikte biriktirdiğimiz en özel kareler...</p>
+        </div>
+
+        <div id="photoGrid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- JavaScript burayı dolduracak -->
+        </div>
+    </section>
+
+    <!-- Mektup Alanı -->
+    <section class="py-20 px-4 bg-roseGold-50/50 border-y border-roseGold-100">
+        <div class="max-w-2xl mx-auto bg-white p-8 md:p-12 rounded-3xl shadow-sm border border-roseGold-100 relative">
+            <div class="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-roseGold-500 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-md">
+                <i class="fa-solid fa-heart text-sm"></i>
+            </div>
+            
+            <h3 class="text-2xl md:text-3xl font-serif text-center text-stone-800 mb-6 mt-2">Sana Söylemek İstediğim Çok Şey Var</h3>
+            
+            <div class="space-y-4 text-stone-600 font-light leading-relaxed text-center md:text-left">
+                <p>Sevgilim,</p>
+                <p>Hayatıma girdiğin günden beri her şeyin rengi değişti. Sanki arka planda hep en sevdiğimiz o şarkı çalıyor ve dünya çok daha yaşanılır bir yer haline geliyor. Seninle gülmek, seninle susmak, seninle hayal kurmak hayatımın en büyük armağanı.</p>
+                <p>İyi ki yollarımız kesişmiş, iyi ki benimle bu hikayeyi yazıyorsun. Seni çok seviyorum.</p>
+            </div>
+            
+            <div class="mt-8 text-right">
+                <span class="font-serif italic text-roseGold-500 text-lg">Sonsuza Kadar Senin</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- GİZLİ / YÖNETİCİ (ADMIN) PANELİ -->
+    <section class="py-12 px-4 max-w-3xl mx-auto border-t border-stone-200 mt-12">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-stone-200">
+            <div class="flex items-center justify-between mb-4">
+                <h4 class="font-serif text-lg text-stone-800 flex items-center gap-2">
+                    <i class="fa-solid fa-gear text-roseGold-500"></i> Anı Yönetim Paneli
+                </h4>
+                <span class="text-xs bg-roseGold-100 text-roseGold-600 px-3 py-1 rounded-full font-medium">Gizli Panel</span>
+            </div>
+            <p class="text-xs text-stone-500 mb-4">Bilgisayarından ya da telefonunun galerisinden doğrudan fotoğraf seçerek anı ekleyebilirsin.</p>
+            
+            <div class="space-y-3">
+                <!-- Dosya Seçici Butonu -->
+                <div class="relative border-2 border-dashed border-stone-200 rounded-xl p-4 text-center hover:border-roseGold-400 transition-colors">
+                    <input type="file" id="imageInput" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" onchange="previewFileName()">
+                    <div id="fileHelpText" class="text-xs text-stone-500 flex flex-col items-center gap-1">
+                        <i class="fa-solid fa-image text-roseGold-500 text-lg"></i>
+                        <span>Fotoğraf seçmek için tıkla (Galeriden / Dosyalardan)</span>
+                    </div>
+                </div>
+
+                <input type="text" id="imgCaption" placeholder="Fotoğrafın Altına Yazılacak Not (Örn: İlk buluşmamız...)" class="w-full px-4 py-2 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-roseGold-500">
+                
+                <button onclick="addPhoto()" class="w-full bg-stone-800 hover:bg-stone-700 text-white py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer">
+                    <i class="fa-solid fa-plus mr-1"></i> Galeriyə Foto Ekle
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-8 text-center text-stone-400 text-sm">
+        <p>Tasarlayan ve Kalbinden Seven Sevgilinize 🤍</p>
+    </footer>
+
+    <!-- JavaScript Kodları -->
+    <script>
+        // 1. Müzik Başlatma ve Karşılama Ekranı
+        const music = document.getElementById('bgMusic');
+        const welcomeOverlay = document.getElementById('welcomeOverlay');
+        const musicIcon = document.getElementById('musicIcon');
+        let isPlaying = false;
+
+        function startExperience() {
+            music.play().then(() => {
+                isPlaying = true;
+                musicIcon.classList.add('fa-pause');
+            }).catch(e => console.log("Müzik çalma hatası:", e));
+
+            welcomeOverlay.style.opacity = '0';
+            setTimeout(() => {
+                welcomeOverlay.style.display = 'none';
+            }, 700);
+        }
+
+        function toggleMusic() {
+            if (isPlaying) {
+                music.pause();
+                musicIcon.classList.remove('fa-pause');
+                musicIcon.classList.add('fa-music');
+            } else {
+                music.play();
+                musicIcon.classList.remove('fa-music');
+                musicIcon.classList.add('fa-pause');
+            }
+            isPlaying = !isPlaying;
+        }
+
+        // 2. İlişki Başlangıç Sayacı (Yıl, Ay-1, Gün)
+        const startDate = new Date(2023, 5, 15, 0, 0, 0); 
+
+        function updateTimer() {
+            const now = new Date();
+            const diff = now - startDate;
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((diff / 1000 / 60) % 60);
+            const seconds = Math.floor((diff / 1000) % 60);
+
+            document.getElementById('days').innerText = days;
+            document.getElementById('hours').innerText = hours;
+            document.getElementById('minutes').innerText = minutes;
+            document.getElementById('seconds').innerText = seconds;
+        }
+        setInterval(updateTimer, 1000);
+        updateTimer();
+
+        // Seçilen dosya adını göster
+        function previewFileName() {
+            const input = document.getElementById('imageInput');
+            const helpText = document.getElementById('fileHelpText');
+            if (input.files && input.files[0]) {
+                helpText.innerHTML = `<i class="fa-solid fa-check text-green-500 text-lg"></i><span class="text-stone-700 font-medium">Seçilen: ${input.files[0].name}</span>`;
+            }
+        }
+
+        // 3. Dosya Seçmeli ve Hafızalı Fotoğraf Yönetim Sistemi
+        let defaultPhotos = [
+            { url: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=600", caption: "İlk buluşmamızdan kalanlar..." },
+            { url: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&q=80&w=600", caption: "En güzel akşamüstlerinden biri." },
+            { url: "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&q=80&w=600", caption: "Gülüşün ömrüme bedel." }
+        ];
+
+        let photos = JSON.parse(localStorage.getItem('our_story_photos')) || defaultPhotos;
+
+        function renderPhotos() {
+            const grid = document.getElementById('photoGrid');
+            grid.innerHTML = '';
+
+            photos.forEach((photo, index) => {
+                const rotation = (index % 2 === 0) ? '-rotate-2' : 'rotate-1';
+                grid.innerHTML += `
+                    <div class="polaroid bg-white p-4 pb-6 rounded shadow-md transform ${rotation} relative group">
+                        <button onclick="deletePhoto(${index})" class="absolute top-2 right-2 bg-red-500 text-white w-8 h-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center shadow-md z-10 cursor-pointer" title="Fotoğrafı Sil">
+                            <i class="fa-solid fa-trash text-xs"></i>
+                        </button>
+                        <div class="aspect-[4/5] bg-stone-100 mb-4 overflow-hidden rounded-sm">
+                            <img src="${photo.url}" alt="Anı" class="w-full h-full object-cover">
+                        </div>
+                        <p class="font-serif text-center text-stone-700 italic text-sm">${photo.caption}</p>
+                    </div>
+                `;
+            });
+        }
+
+        function addPhoto() {
+            const fileInput = document.getElementById('imageInput');
+            const caption = document.getElementById('imgCaption').value.trim();
+
+            if (!fileInput.files || fileInput.files.length === 0) {
+                alert("Lütfen galeriden veya bilgisayarından bir fotoğraf seç!");
+                return;
+            }
+
+            if (!caption) {
+                alert("Lütfen fotoğraf için bir açıklama notu yaz!");
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const base64Image = e.target.result;
+                
+                photos.push({ url: base64Image, caption: caption });
+                localStorage.setItem('our_story_photos', JSON.stringify(photos));
+
+                // Formu sıfırla
+                fileInput.value = '';
+                document.getElementById('imgCaption').value = '';
+                document.getElementById('fileHelpText').innerHTML = `
+                    <i class="fa-solid fa-image text-roseGold-500 text-lg"></i>
+                    <span>Fotoğraf seçmek için tıkla (Galeriden / Dosyalardan)</span>
+                `;
+                
+                renderPhotos();
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        function deletePhoto(index) {
+            if (confirm("Bu anıyı silmek istediğine emin misin?")) {
+                photos.splice(index, 1);
+                localStorage.setItem('our_story_photos', JSON.stringify(photos));
+                renderPhotos();
+            }
+        }
+
+        renderPhotos();
+    </script>
+</body>
+</html>
