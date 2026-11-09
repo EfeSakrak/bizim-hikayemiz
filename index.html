@@ -70,9 +70,10 @@
         </div>
     </div>
 
-    <!-- Müzik Çalar Arka Plan (Yalın - Akşamüstü / Örnek Ses) -->
+    <!-- Müzik Çalar Arka Plan -->
     <audio id="bgMusic" loop>
-        <source src="muzik.mp3" type="audio/mpeg">
+        <!-- Kendi müzik dosyanı eklemek için burayı './muzik.mp3' yapabilirsin -->
+        <source src="./muzik.mp3" type="audio/mpeg">
     </audio>
 
     <!-- Sabit Müzik Butonu -->
@@ -97,6 +98,18 @@
                 <div class="bg-white/70 backdrop-blur border border-roseGold-200/60 p-3 rounded-2xl shadow-sm">
                     <span id="days" class="block text-2xl md:text-3xl font-serif font-semibold text-roseGold-500">0</span>
                     <span class="text-xs text-stone-500 uppercase tracking-wider">Gün</span>
+                </div>
+                <div class="bg-white/70 backdrop-blur border border-roseGold-200/60 p-3 rounded-2xl shadow-sm">
+                    <span id="hours" class="block text-2xl md:text-3xl font-serif font-semibold text-roseGold-500">0</span>
+                    <span class="text-xs text-stone-500 uppercase tracking-wider">Saat</span>
+                </div>
+                <div class="bg-white/70 backdrop-blur border border-roseGold-200/60 p-3 rounded-2xl shadow-sm">
+                    <span id="minutes" class="block text-2xl md:text-3xl font-serif font-semibold text-roseGold-500">0</span>
+                    <span class="text-xs text-stone-500 uppercase tracking-wider">Dakika</span>
+                </div>
+                <div class="bg-white/70 backdrop-blur border border-roseGold-200/60 p-3 rounded-2xl shadow-sm">
+                    <span id="seconds" class="block text-2xl md:text-3xl font-serif font-semibold text-roseGold-500">0</span>
+                    <span class="text-xs text-stone-500 uppercase tracking-wider">Saniye</span>
                 </div>
             </div>
 
@@ -131,8 +144,8 @@
             
             <div class="space-y-4 text-stone-600 font-light leading-relaxed text-center md:text-left">
                 <p>Sevgilim,</p>
-                <p>Hayatıma girdiğin günden beri her şeyin rengi değişti. Sanki arka planda hep en sevdiğimiz o şarkı çalıyor ve dünya çok daha yaşanılır bir hale geliyor. Seninle gülmek, seninle susmak, seninle hayal kurmak hayatımın en büyük armağanı.</p>
-                <p>İyi ki peşinden koşmuşum, iyi ki benimle bu hikayeyi yazıyorsun. Seni çok ama çok seviyorum.</p>
+                <p>Hayatıma girdiğin günden beri her şeyin rengi değişti. Sanki arka planda hep en sevdiğimiz o şarkı çalıyor ve dünya çok daha yaşanılır bir yer haline geliyor. Seninle gülmek, seninle susmak, seninle hayal kurmak hayatımın en büyük armağanı.</p>
+                <p>İyi ki yollarımız kesişmiş, iyi ki benimle bu hikayeyi yazıyorsun. Seni çok seviyorum.</p>
             </div>
             
             <div class="mt-8 text-right">
@@ -141,7 +154,7 @@
         </div>
     </section>
 
-    <!-- GİZLİ / YÖNETİCİ (ADMIN) PANELİ -->
+    <!-- GİZLİ / YÖNETİCİ (ADMIN) PANELİ (Çoklu Fotoğraf Destekli) -->
     <section class="py-12 px-4 max-w-3xl mx-auto border-t border-stone-200 mt-12">
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-stone-200">
             <div class="flex items-center justify-between mb-4">
@@ -150,22 +163,23 @@
                 </h4>
                 <span class="text-xs bg-roseGold-100 text-roseGold-600 px-3 py-1 rounded-full font-medium">Gizli Panel</span>
             </div>
-            <p class="text-xs text-stone-500 mb-4">Bilgisayarından ya da telefonunun galerisinden doğrudan fotoğraf seçerek anı ekleyebilirsin.</p>
+            <p class="text-xs text-stone-500 mb-4">İstediğin kadar fotoğrafı **aynı anda** seçerek tek tıkla galeriyə ekleyebilirsin.</p>
             
             <div class="space-y-3">
-                <!-- Dosya Seçici Butonu -->
-                <div class="relative border-2 border-dashed border-stone-200 rounded-xl p-4 text-center hover:border-roseGold-400 transition-colors">
-                    <input type="file" id="imageInput" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" onchange="previewFileName()">
+                <!-- Çoklu Dosya Seçici Butonu -->
+                <div class="relative border-2 border-dashed border-stone-200 rounded-xl p-6 text-center hover:border-roseGold-400 transition-colors">
+                    <!-- 'multiple' etiketi sayesinde toplu seçim yapılabilir -->
+                    <input type="file" id="imageInput" accept="image/*" multiple class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" onchange="previewFilesName()">
                     <div id="fileHelpText" class="text-xs text-stone-500 flex flex-col items-center gap-1">
-                        <i class="fa-solid fa-image text-roseGold-500 text-lg"></i>
-                        <span>Fotoğraf seçmek için tıkla (Galeriden / Dosyalardan)</span>
+                        <i class="fa-solid fa-images text-roseGold-500 text-xl"></i>
+                        <span class="font-medium text-stone-700">Fotoğrafları seçmek için tıkla (Birden fazla seçebilirsin)</span>
                     </div>
                 </div>
 
-                <input type="text" id="imgCaption" placeholder="Fotoğrafın Altına Yazılacak Not (Örn: İlk buluşmamız...)" class="w-full px-4 py-2 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-roseGold-500">
+                <input type="text" id="imgCaption" placeholder="Fotoğraflar İçin Ortak Not (Örn: Birlikte en güzel anlarımız... Boş bırakırsan varsayılan eklenir)" class="w-full px-4 py-2 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-roseGold-500">
                 
-                <button onclick="addPhoto()" class="w-full bg-stone-800 hover:bg-stone-700 text-white py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer">
-                    <i class="fa-solid fa-plus mr-1"></i> Galeriyə Foto Ekle
+                <button onclick="addPhotos()" class="w-full bg-stone-800 hover:bg-stone-700 text-white py-3 rounded-xl text-sm font-medium transition-all cursor-pointer">
+                    <i class="fa-solid fa-cloud-arrow-up mr-1"></i> Seçilen Fotoğrafları Toplu Ekle
                 </button>
             </div>
         </div>
@@ -209,8 +223,8 @@
             isPlaying = !isPlaying;
         }
 
-        // 2. İlişki Başlangıç Sayacı (Yıl, Ay-1, Gün)
-        const startDate = new Date(2026, 6, 17); 
+        // 2. İlişki Başlangıç Sayacı (Yıl, Ay-1, Gün, Saat, Dakika, Saniye)
+        const startDate = new Date(2026, 6, 17, 0, 0, 0); 
 
         function updateTimer() {
             const now = new Date();
@@ -222,20 +236,23 @@
             const seconds = Math.floor((diff / 1000) % 60);
 
             document.getElementById('days').innerText = days;
+            document.getElementById('hours').innerText = hours;
+            document.getElementById('minutes').innerText = minutes;
+            document.getElementById('seconds').innerText = seconds;
         }
         setInterval(updateTimer, 1000);
         updateTimer();
 
-        // Seçilen dosya adını göster
-        function previewFileName() {
+        // Seçilen dosya miktarını göster
+        function previewFilesName() {
             const input = document.getElementById('imageInput');
             const helpText = document.getElementById('fileHelpText');
-            if (input.files && input.files[0]) {
-                helpText.innerHTML = `<i class="fa-solid fa-check text-green-500 text-lg"></i><span class="text-stone-700 font-medium">Seçilen: ${input.files[0].name}</span>`;
+            if (input.files && input.files.length > 0) {
+                helpText.innerHTML = `<i class="fa-solid fa-check text-green-500 text-lg"></i><span class="text-stone-700 font-medium">${input.files.length} adet fotoğraf seçildi. Toplu ekle butonuna basabilirsin!</span>`;
             }
         }
 
-        // 3. Dosya Seçmeli ve Hafızalı Fotoğraf Yönetim Sistemi
+        // 3. Çoklu Fotoğraf Yönetim Sistemi
         let defaultPhotos = [
             { url: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=600", caption: "İlk buluşmamızdan kalanlar..." },
             { url: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&q=80&w=600", caption: "En güzel akşamüstlerinden biri." },
@@ -264,41 +281,46 @@
             });
         }
 
-        function addPhoto() {
+        function addPhotos() {
             const fileInput = document.getElementById('imageInput');
-            const caption = document.getElementById('imgCaption').value.trim();
+            let caption = document.getElementById('imgCaption').value.trim();
 
             if (!fileInput.files || fileInput.files.length === 0) {
-                alert("Lütfen galeriden veya bilgisayarından bir fotoğraf seç!");
+                alert("Lütfen en az bir fotoğraf seç!");
                 return;
             }
 
             if (!caption) {
-                alert("Lütfen fotoğraf için bir açıklama notu yaz!");
-                return;
+                caption = "Birlikte en güzel anımız 🤍";
             }
 
-            const file = fileInput.files[0];
-            const reader = new FileReader();
+            const files = Array.from(fileInput.files);
+            let processedCount = 0;
 
-            reader.onload = function(e) {
-                const base64Image = e.target.result;
-                
-                photos.push({ url: base64Image, caption: caption });
-                localStorage.setItem('our_story_photos', JSON.stringify(photos));
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    photos.push({ url: e.target.result, caption: caption });
+                    processedCount++;
 
-                // Formu sıfırla
-                fileInput.value = '';
-                document.getElementById('imgCaption').value = '';
-                document.getElementById('fileHelpText').innerHTML = `
-                    <i class="fa-solid fa-image text-roseGold-500 text-lg"></i>
-                    <span>Fotoğraf seçmek için tıkla (Galeriden / Dosyalardan)</span>
-                `;
-                
-                renderPhotos();
-            };
+                    // Tüm fotoğraflar işlendiğinde hafızayı güncelle ve ekranı yenile
+                    if (processedCount === files.length) {
+                        localStorage.setItem('our_story_photos', JSON.stringify(photos));
 
-            reader.readAsDataURL(file);
+                        // Formu sıfırla
+                        fileInput.value = '';
+                        document.getElementById('imgCaption').value = '';
+                        document.getElementById('fileHelpText').innerHTML = `
+                            <i class="fa-solid fa-images text-roseGold-500 text-xl"></i>
+                            <span class="font-medium text-stone-700">Fotoğrafları seçmek için tıkla (Birden fazla seçebilirsin)</span>
+                        `;
+                        
+                        renderPhotos();
+                        alert(`${files.length} adet fotoğraf başarıyla eklendi! ✨`);
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
         }
 
         function deletePhoto(index) {
