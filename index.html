@@ -186,7 +186,7 @@
 
     <!-- Footer -->
     <footer class="py-8 text-center text-stone-400 text-sm">
-        <p>Seni hep sevecek sevgilin 🤍</p>
+        <p>Seni Hep Sevecek Sevgilin 🤍</p>
     </footer>
 
     <!-- Supabase Entegrasyonu ve Site Mantığı -->
@@ -264,7 +264,7 @@
             }
         }
 
-        // 3. Supabase'den Fotoğrafları Çekip Listeleme
+        // 3. Supabase'den Fotoğrafları Çekip Listeleme (Silme Butonu Eklendi)
         async function fetchPhotos() {
             const grid = document.getElementById('photoGrid');
             
@@ -289,6 +289,11 @@
                 const rotation = (index % 2 === 0) ? '-rotate-2' : 'rotate-1';
                 grid.innerHTML += `
                     <div class="polaroid bg-white p-4 pb-6 rounded shadow-md transform ${rotation} relative group">
+                        <!-- Fotoğrafı Silme Butonu (Üzerine gelince görünür) -->
+                        <button onclick="deletePhoto(${photo.id}, '${photo.url}')" class="absolute top-2 right-2 bg-red-500 text-white w-8 h-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center shadow-md z-10 cursor-pointer" title="Fotoğrafı Sil">
+                            <i class="fa-solid fa-trash text-xs"></i>
+                        </button>
+                        
                         <div class="aspect-[4/5] bg-stone-100 mb-4 overflow-hidden rounded-sm">
                             <img src="${photo.url}" alt="Anı" class="w-full h-full object-cover">
                         </div>
@@ -352,6 +357,26 @@
 
             alert("Fotoğraflar başarıyla albüme eklendi! ✨");
             fetchPhotos();
+        }
+
+        // 5. Fotoğrafı Supabase'den Silme Fonksiyonu
+        async function deletePhoto(id, url) {
+            if (confirm("Bu anıyı albümden silmek istediğine emin misin?")) {
+                // Veritabanından satırı sil
+                const { error } = await _supabase
+                    .from('memories')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) {
+                    alert("Silinirken hata oluştu: " + error.message);
+                    return;
+                }
+
+                // (Opsiyonel) Eğer Supabase SQL politikalarında delete yetkisi tamamsa bu çalışır
+                alert("Fotoğraf başarıyla silindi! 🗑️");
+                fetchPhotos();
+            }
         }
 
         fetchPhotos();
