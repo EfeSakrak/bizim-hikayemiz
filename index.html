@@ -72,7 +72,6 @@
 
     <!-- Müzik Çalar Arka Plan -->
     <audio id="bgMusic" loop>
-        <!-- Kendi müzik dosyanı eklemek için burayı './muzik.mp3' yapabilirsin -->
         <source src="./muzik.mp3" type="audio/mpeg">
     </audio>
 
@@ -154,7 +153,7 @@
         </div>
     </section>
 
-    <!-- GİZLİ / YÖNETİCİ (ADMIN) PANELİ (Çoklu Fotoğraf Destekli) -->
+    <!-- GİZLİ / YÖNETİCİ (ADMIN) PANELİ -->
     <section class="py-12 px-4 max-w-3xl mx-auto border-t border-stone-200 mt-12">
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-stone-200">
             <div class="flex items-center justify-between mb-4">
@@ -163,12 +162,10 @@
                 </h4>
                 <span class="text-xs bg-roseGold-100 text-roseGold-600 px-3 py-1 rounded-full font-medium">Gizli Panel</span>
             </div>
-            <p class="text-xs text-stone-500 mb-4">İstediğin kadar fotoğrafı **aynı anda** seçerek tek tıkla galeriyə ekleyebilirsin.</p>
+            <p class="text-xs text-stone-500 mb-4">Fotoğraflar otomatik olarak optimize edilir. Toplu olarak seçip ekleyebilirsin.</p>
             
             <div class="space-y-3">
-                <!-- Çoklu Dosya Seçici Butonu -->
                 <div class="relative border-2 border-dashed border-stone-200 rounded-xl p-6 text-center hover:border-roseGold-400 transition-colors">
-                    <!-- 'multiple' etiketi sayesinde toplu seçim yapılabilir -->
                     <input type="file" id="imageInput" accept="image/*" multiple class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" onchange="previewFilesName()">
                     <div id="fileHelpText" class="text-xs text-stone-500 flex flex-col items-center gap-1">
                         <i class="fa-solid fa-images text-roseGold-500 text-xl"></i>
@@ -176,7 +173,7 @@
                     </div>
                 </div>
 
-                <input type="text" id="imgCaption" placeholder="Fotoğraflar İçin Ortak Not (Örn: Birlikte en güzel anlarımız... Boş bırakırsan varsayılan eklenir)" class="w-full px-4 py-2 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-roseGold-500">
+                <input type="text" id="imgCaption" placeholder="Fotoğraflar İçin Ortak Not (Örn: Birlikte en güzel anlarımız...)" class="w-full px-4 py-2 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-roseGold-500">
                 
                 <button onclick="addPhotos()" class="w-full bg-stone-800 hover:bg-stone-700 text-white py-3 rounded-xl text-sm font-medium transition-all cursor-pointer">
                     <i class="fa-solid fa-cloud-arrow-up mr-1"></i> Seçilen Fotoğrafları Toplu Ekle
@@ -187,7 +184,7 @@
 
     <!-- Footer -->
     <footer class="py-8 text-center text-stone-400 text-sm">
-        <p>Tasarlayan ve Kalbinden Seven Sevgilinize 🤍</p>
+        <p>Seni Her Zaman Sevecek Olan Sevgilin 🤍</p>
     </footer>
 
     <!-- JavaScript Kodları -->
@@ -243,16 +240,15 @@
         setInterval(updateTimer, 1000);
         updateTimer();
 
-        // Seçilen dosya miktarını göster
         function previewFilesName() {
             const input = document.getElementById('imageInput');
             const helpText = document.getElementById('fileHelpText');
             if (input.files && input.files.length > 0) {
-                helpText.innerHTML = `<i class="fa-solid fa-check text-green-500 text-lg"></i><span class="text-stone-700 font-medium">${input.files.length} adet fotoğraf seçildi. Toplu ekle butonuna basabilirsin!</span>`;
+                helpText.innerHTML = `<i class="fa-solid fa-check text-green-500 text-lg"></i><span class="text-stone-700 font-medium">${input.files.length} adet fotoğraf seçildi. Yükle butonuna basabilirsin!</span>`;
             }
         }
 
-        // 3. Çoklu Fotoğraf Yönetim Sistemi
+        // 3. Otomatik Sıkıştırmalı (Optimize Edilmiş) Çoklu Fotoğraf Sistemi
         let defaultPhotos = [
             { url: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=600", caption: "İlk buluşmamızdan kalanlar..." },
             { url: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&q=80&w=600", caption: "En güzel akşamüstlerinden biri." },
@@ -281,6 +277,44 @@
             });
         }
 
+        // Fotoğrafı tarayıcıda küçültüp sıkıştıran yardımcı fonksiyon
+        function compressImage(file, callback) {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function(event) {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 800;
+                    const MAX_HEIGHT = 1000;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > MAX_WIDTH) {
+                            height *= MAX_WIDTH / width;
+                            width = MAX_WIDTH;
+                        }
+                    } else {
+                        if (height > MAX_HEIGHT) {
+                            width *= MAX_HEIGHT / height;
+                            height = MAX_HEIGHT;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    // Kaliteyi %70'e düşürerek hafif ve hızlı hale getir
+                    const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                    callback(compressedDataUrl);
+                }
+            }
+        }
+
         function addPhotos() {
             const fileInput = document.getElementById('imageInput');
             let caption = document.getElementById('imgCaption').value.trim();
@@ -298,28 +332,26 @@
             let processedCount = 0;
 
             files.forEach(file => {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    photos.push({ url: e.target.result, caption: caption });
+                compressImage(file, function(compressedUrl) {
+                    photos.push({ url: compressedUrl, caption: caption });
                     processedCount++;
 
-                    // Tüm fotoğraflar işlendiğinde hafızayı güncelle ve ekranı yenile
                     if (processedCount === files.length) {
-                        localStorage.setItem('our_story_photos', JSON.stringify(photos));
-
-                        // Formu sıfırla
-                        fileInput.value = '';
-                        document.getElementById('imgCaption').value = '';
-                        document.getElementById('fileHelpText').innerHTML = `
-                            <i class="fa-solid fa-images text-roseGold-500 text-xl"></i>
-                            <span class="font-medium text-stone-700">Fotoğrafları seçmek için tıkla (Birden fazla seçebilirsin)</span>
-                        `;
-                        
-                        renderPhotos();
-                        alert(`${files.length} adet fotoğraf başarıyla eklendi! ✨`);
+                        try {
+                            localStorage.setItem('our_story_photos', JSON.stringify(photos));
+                            fileInput.value = '';
+                            document.getElementById('imgCaption').value = '';
+                            document.getElementById('fileHelpText').innerHTML = `
+                                <i class="fa-solid fa-images text-roseGold-500 text-xl"></i>
+                                <span class="font-medium text-stone-700">Fotoğrafları seçmek için tıkla (Birden fazla seçebilirsin)</span>
+                            `;
+                            renderPhotos();
+                            alert(`${files.length} adet fotoğraf başarıyla eklendi! ✨`);
+                        } catch (e) {
+                            alert("Hafıza dolu uyarısı! Çok fazla büyük fotoğraf ekledin. Bazılarını silip tekrar deneyebilirsin.");
+                        }
                     }
-                };
-                reader.readAsDataURL(file);
+                });
             });
         }
 
