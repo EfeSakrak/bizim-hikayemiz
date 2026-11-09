@@ -10,6 +10,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <script>
         tailwind.config = {
@@ -70,9 +72,9 @@
         </div>
     </div>
 
-    <!-- Müzik Çalar (Test için kararlı bir ses linki kullanıldı, kendi dosyan varsa src içine yazabilirsin) -->
+    <!-- Müzik Çalar -->
     <audio id="bgMusic" loop preload="auto">
-        <source src="muzik.mp3" type="audio/mpeg">
+        <source src="./muzik.mp3" type="audio/mpeg">
     </audio>
 
     <!-- Sabit Müzik Butonu -->
@@ -128,7 +130,7 @@
         </div>
 
         <div id="photoGrid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <!-- JavaScript burayı dolduracak -->
+            <div class="col-span-3 text-center text-stone-400 py-12">Anılar yükleniyor... 🤍</div>
         </div>
     </section>
 
@@ -153,30 +155,30 @@
         </div>
     </section>
 
-    <!-- GİZLİ / YÖNETİCİ (ADMIN) PANELİ -->
+    <!-- ORTAK FOTOĞRAF YÜKLEME PANELİ -->
     <section class="py-12 px-4 max-w-3xl mx-auto border-t border-stone-200 mt-12">
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-stone-200">
             <div class="flex items-center justify-between mb-4">
                 <h4 class="font-serif text-lg text-stone-800 flex items-center gap-2">
-                    <i class="fa-solid fa-gear text-roseGold-500"></i> Anı Yönetim Paneli
+                    <i class="fa-solid fa-heart text-roseGold-500"></i> Yeni Anı Ekle
                 </h4>
-                <span class="text-xs bg-roseGold-100 text-roseGold-600 px-3 py-1 rounded-full font-medium">Gizli Panel</span>
+                <span class="text-xs bg-roseGold-100 text-roseGold-600 px-3 py-1 rounded-full font-medium">Ortak Albüm</span>
             </div>
-            <p class="text-xs text-stone-500 mb-4">Fotoğraflar otomatik optimize edilir. Toplu olarak seçip ekleyebilirsin.</p>
+            <p class="text-xs text-stone-500 mb-4">İstediğiniz zaman fotoğraf seçip anında albüme ekleyebilirsiniz. Eklenenler herkese görünür!</p>
             
             <div class="space-y-3">
                 <div class="relative border-2 border-dashed border-stone-200 rounded-xl p-6 text-center hover:border-roseGold-400 transition-colors">
                     <input type="file" id="imageInput" accept="image/*" multiple class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" onchange="previewFilesName()">
                     <div id="fileHelpText" class="text-xs text-stone-500 flex flex-col items-center gap-1">
                         <i class="fa-solid fa-images text-roseGold-500 text-xl"></i>
-                        <span class="font-medium text-stone-700">Fotoğrafları seçmek için tıkla (Birden fazla seçebilirsin)</span>
+                        <span class="font-medium text-stone-700">Fotoğraf seçmek için tıkla (Toplu seçebilirsin)</span>
                     </div>
                 </div>
 
-                <input type="text" id="imgCaption" placeholder="Fotoğraflar İçin Ortak Not (Örn: Birlikte en güzel anlarımız...)" class="w-full px-4 py-2 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-roseGold-500">
+                <input type="text" id="imgCaption" placeholder="Fotoğraf Notu (Örn: En güzel günümüz...)" class="w-full px-4 py-2 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-roseGold-500">
                 
-                <button onclick="addPhotos()" class="w-full bg-stone-800 hover:bg-stone-700 text-white py-3 rounded-xl text-sm font-medium transition-all cursor-pointer">
-                    <i class="fa-solid fa-cloud-arrow-up mr-1"></i> Seçilen Fotoğrafları Toplu Ekle
+                <button onclick="uploadPhotosToCloud()" id="uploadBtn" class="w-full bg-stone-800 hover:bg-stone-700 text-white py-3 rounded-xl text-sm font-medium transition-all cursor-pointer">
+                    <i class="fa-solid fa-cloud-arrow-up mr-1"></i> Albüme Ekle
                 </button>
             </div>
         </div>
@@ -184,12 +186,17 @@
 
     <!-- Footer -->
     <footer class="py-8 text-center text-stone-400 text-sm">
-        <p>Seni Her Zaman Sevecek Olan Sevgilin 🤍</p>
+        <p>Seni hep sevecek sevgilin 🤍</p>
     </footer>
 
-    <!-- JavaScript Kodları -->
+    <!-- Supabase Entegrasyonu ve Site Mantığı -->
     <script>
-        // 1. Müzik Başlatma ve Güvenli Oynatıcı Kontrolü
+        const SUPABASE_URL = 'https://imouajsxxugvuemoundd.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_ZP-silMr1R9tXooV9w6D3Q_mjqAB_js';
+
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // 1. Müzik Kontrolleri
         const music = document.getElementById('bgMusic');
         const welcomeOverlay = document.getElementById('welcomeOverlay');
         const musicIcon = document.getElementById('musicIcon');
@@ -202,7 +209,7 @@
                 musicIcon.classList.remove('fa-music');
                 musicIcon.classList.add('fa-pause');
             } catch (e) {
-                console.log("Müzik çalma engellendi veya hata oluştu:", e);
+                console.log("Müzik çalma engellendi:", e);
             }
 
             welcomeOverlay.style.opacity = '0';
@@ -229,8 +236,8 @@
             }
         }
 
-        // 2. İlişki Başlangıç Sayacı (Yıl, Ay-1, Gün, Saat, Dakika, Saniye)
-        const startDate = new Date(2026, 6, 15, 0, 0, 0); 
+        // 2. İlişki Başlangıç Sayacı (Yıl, Ay-1, Gün)
+        const startDate = new Date(2026, 6, 17, 0, 0, 0); 
 
         function updateTimer() {
             const now = new Date();
@@ -257,74 +264,45 @@
             }
         }
 
-        // 3. Fotoğraf Galerisi & Sıkıştırma Sistemi
-        let defaultPhotos = [
-            { url: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=600", caption: "İlk buluşmamızdan kalanlar..." },
-            { url: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&q=80&w=600", caption: "En güzel akşamüstlerinden biri." },
-            { url: "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&q=80&w=600", caption: "Gülüşün ömrüme bedel." }
-        ];
-
-        let photos = JSON.parse(localStorage.getItem('our_story_photos')) || defaultPhotos;
-
-        function renderPhotos() {
+        // 3. Supabase'den Fotoğrafları Çekip Listeleme
+        async function fetchPhotos() {
             const grid = document.getElementById('photoGrid');
-            grid.innerHTML = '';
+            
+            const { data, error } = await _supabase
+                .from('memories')
+                .select('*')
+                .order('id', { ascending: false });
 
-            photos.forEach((photo, index) => {
+            if (error) {
+                console.error('Fotoğraflar çekilemedi:', error);
+                grid.innerHTML = `<div class="col-span-3 text-center text-red-400 py-12">Fotoğraflar yüklenirken hata oluştu.</div>`;
+                return;
+            }
+
+            if (!data || data.length === 0) {
+                grid.innerHTML = `<div class="col-span-3 text-center text-stone-400 py-12">Henüz fotoğraf eklenmemiş. İlk anıyı sen ekle! 🤍</div>`;
+                return;
+            }
+
+            grid.innerHTML = '';
+            data.forEach((photo, index) => {
                 const rotation = (index % 2 === 0) ? '-rotate-2' : 'rotate-1';
                 grid.innerHTML += `
                     <div class="polaroid bg-white p-4 pb-6 rounded shadow-md transform ${rotation} relative group">
-                        <button onclick="deletePhoto(${index})" class="absolute top-2 right-2 bg-red-500 text-white w-8 h-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center shadow-md z-10 cursor-pointer" title="Fotoğrafı Sil">
-                            <i class="fa-solid fa-trash text-xs"></i>
-                        </button>
                         <div class="aspect-[4/5] bg-stone-100 mb-4 overflow-hidden rounded-sm">
                             <img src="${photo.url}" alt="Anı" class="w-full h-full object-cover">
                         </div>
-                        <p class="font-serif text-center text-stone-700 italic text-sm">${photo.caption}</p>
+                        <p class="font-serif text-center text-stone-700 italic text-sm">${photo.caption || ''}</p>
                     </div>
                 `;
             });
         }
 
-        function compressImage(file, callback) {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = function(event) {
-                const img = new Image();
-                img.src = event.target.result;
-                img.onload = function() {
-                    const canvas = document.createElement('canvas');
-                    const MAX_WIDTH = 800;
-                    const MAX_HEIGHT = 1000;
-                    let width = img.width;
-                    let height = img.height;
-
-                    if (width > height) {
-                        if (width > MAX_WIDTH) {
-                            height *= MAX_WIDTH / width;
-                            width = MAX_WIDTH;
-                        }
-                    } else {
-                        if (height > MAX_HEIGHT) {
-                            width *= MAX_HEIGHT / height;
-                            height = MAX_HEIGHT;
-                        }
-                    }
-
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-
-                    const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
-                    callback(compressedDataUrl);
-                }
-            }
-        }
-
-        function addPhotos() {
+        // 4. Supabase Storage ve Veritabanına Fotoğraf Yükleme
+        async function uploadPhotosToCloud() {
             const fileInput = document.getElementById('imageInput');
             let caption = document.getElementById('imgCaption').value.trim();
+            const uploadBtn = document.getElementById('uploadBtn');
 
             if (!fileInput.files || fileInput.files.length === 0) {
                 alert("Lütfen en az bir fotoğraf seç!");
@@ -332,45 +310,51 @@
             }
 
             if (!caption) {
-                caption = "Birlikte en güzel anılarımızdan biri 🤍";
+                caption = "Birlikte en güzel anımız 🤍";
             }
+
+            uploadBtn.innerText = "Yükleniyor...";
+            uploadBtn.disabled = true;
 
             const files = Array.from(fileInput.files);
-            let processedCount = 0;
 
-            files.forEach(file => {
-                compressImage(file, function(compressedUrl) {
-                    photos.push({ url: compressedUrl, caption: caption });
-                    processedCount++;
+            for (const file of files) {
+                const fileName = `${Date.now()}_${file.name}`;
+                
+                const { data: storageData, error: storageError } = await _supabase.storage
+                    .from('photos')
+                    .upload(fileName, file);
 
-                    if (processedCount === files.length) {
-                        try {
-                            localStorage.setItem('our_story_photos', JSON.stringify(photos));
-                            fileInput.value = '';
-                            document.getElementById('imgCaption').value = '';
-                            document.getElementById('fileHelpText').innerHTML = `
-                                <i class="fa-solid fa-images text-roseGold-500 text-xl"></i>
-                                <span class="font-medium text-stone-700">Fotoğrafları seçmek için tıkla (Birden fazla seçebilirsin)</span>
-                            `;
-                            renderPhotos();
-                            alert(`${files.length} adet fotoğraf başarıyla eklendi! ✨`);
-                        } catch (e) {
-                            alert("Hafıza dolu uyarısı! Çok fazla büyük fotoğraf ekledin.");
-                        }
-                    }
-                });
-            });
-        }
+                if (storageError) {
+                    alert("Fotoğraf yüklenirken hata oluştu: " + storageError.message);
+                    continue;
+                }
 
-        function deletePhoto(index) {
-            if (confirm("Bu anıyı silmek istediğine emin misin?")) {
-                photos.splice(index, 1);
-                localStorage.setItem('our_story_photos', JSON.stringify(photos));
-                renderPhotos();
+                const { data: publicURLData } = _supabase.storage
+                    .from('photos')
+                    .getPublicUrl(fileName);
+
+                const publicURL = publicURLData.publicUrl;
+
+                await _supabase
+                    .from('memories')
+                    .insert([{ url: publicURL, caption: caption }]);
             }
+
+            fileInput.value = '';
+            document.getElementById('imgCaption').value = '';
+            document.getElementById('fileHelpText').innerHTML = `
+                <i class="fa-solid fa-images text-roseGold-500 text-xl"></i>
+                <span class="font-medium text-stone-700">Fotoğraf seçmek için tıkla (Toplu seçebilirsin)</span>
+            `;
+            uploadBtn.innerText = "Albüme Ekle";
+            uploadBtn.disabled = false;
+
+            alert("Fotoğraflar başarıyla albüme eklendi! ✨");
+            fetchPhotos();
         }
 
-        renderPhotos();
+        fetchPhotos();
     </script>
 </body>
 </html>
