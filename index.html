@@ -72,7 +72,7 @@
 
     <!-- Müzik Çalar Arka Plan (Yalın - Akşamüstü / Örnek Ses) -->
     <audio id="bgMusic" loop>
-        <source src="https://www.bensound.com/bensound-music/bensound-tenderness.mp3" type="audio/mpeg">
+        <source src="muzik.mp3" type="audio/mpeg">
     </audio>
 
     <!-- Sabit Müzik Butonu -->
@@ -97,18 +97,6 @@
                 <div class="bg-white/70 backdrop-blur border border-roseGold-200/60 p-3 rounded-2xl shadow-sm">
                     <span id="days" class="block text-2xl md:text-3xl font-serif font-semibold text-roseGold-500">0</span>
                     <span class="text-xs text-stone-500 uppercase tracking-wider">Gün</span>
-                </div>
-                <div class="bg-white/70 backdrop-blur border border-roseGold-200/60 p-3 rounded-2xl shadow-sm">
-                    <span id="hours" class="block text-2xl md:text-3xl font-serif font-semibold text-roseGold-500">0</span>
-                    <span class="text-xs text-stone-500 uppercase tracking-wider">Saat</span>
-                </div>
-                <div class="bg-white/70 backdrop-blur border border-roseGold-200/60 p-3 rounded-2xl shadow-sm">
-                    <span id="minutes" class="block text-2xl md:text-3xl font-serif font-semibold text-roseGold-500">0</span>
-                    <span class="text-xs text-stone-500 uppercase tracking-wider">Dakika</span>
-                </div>
-                <div class="bg-white/70 backdrop-blur border border-roseGold-200/60 p-3 rounded-2xl shadow-sm">
-                    <span id="seconds" class="block text-2xl md:text-3xl font-serif font-semibold text-roseGold-500">0</span>
-                    <span class="text-xs text-stone-500 uppercase tracking-wider">Saniye</span>
                 </div>
             </div>
 
@@ -143,8 +131,8 @@
             
             <div class="space-y-4 text-stone-600 font-light leading-relaxed text-center md:text-left">
                 <p>Sevgilim,</p>
-                <p>Hayatıma girdiğin günden beri her şeyin rengi değişti. Sanki arka planda hep en sevdiğimiz o şarkı çalıyor ve dünya çok daha yaşanılır bir yer haline geliyor. Seninle gülmek, seninle susmak, seninle hayal kurmak hayatımın en büyük armağanı.</p>
-                <p>İyi ki yollarımız kesişmiş, iyi ki benimle bu hikayeyi yazıyorsun. Seni çok seviyorum.</p>
+                <p>Hayatıma girdiğin günden beri her şeyin rengi değişti. Sanki arka planda hep en sevdiğimiz o şarkı çalıyor ve dünya çok daha yaşanılır bir hale geliyor. Seninle gülmek, seninle susmak, seninle hayal kurmak hayatımın en büyük armağanı.</p>
+                <p>İyi ki peşinden koşmuşum, iyi ki benimle bu hikayeyi yazıyorsun. Seni çok ama çok seviyorum.</p>
             </div>
             
             <div class="mt-8 text-right">
@@ -222,7 +210,7 @@
         }
 
         // 2. İlişki Başlangıç Sayacı (Yıl, Ay-1, Gün)
-        const startDate = new Date(2023, 5, 15, 0, 0, 0); 
+        const startDate = new Date(2026, 6, 17); 
 
         function updateTimer() {
             const now = new Date();
@@ -234,9 +222,6 @@
             const seconds = Math.floor((diff / 1000) % 60);
 
             document.getElementById('days').innerText = days;
-            document.getElementById('hours').innerText = hours;
-            document.getElementById('minutes').innerText = minutes;
-            document.getElementById('seconds').innerText = seconds;
         }
         setInterval(updateTimer, 1000);
         updateTimer();
