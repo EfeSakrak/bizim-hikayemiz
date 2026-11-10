@@ -52,6 +52,12 @@
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
     </style>
+    <!-- PWA Kurulum Etiketleri -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#d56a4d">
+    <link rel="apple-touch-icon" href="icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 <body class="selection:bg-roseGold-200 selection:text-roseGold-900">
 
@@ -380,6 +386,14 @@
         }
 
         fetchPhotos();
+        // Service Worker Kaydı (PWA için)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('Uygulama başarıyla kuruldu!'))
+                    .catch(err => console.log('Kurulum hatası:', err));
+            });
+        }
     </script>
 </body>
 </html>

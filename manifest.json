@@ -1,0 +1,20 @@
+{
+  "name": "Bizim Hikayemiz",
+  "short_name": "Hikayemiz",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fdf8f6",
+  "theme_color": "#d56a4d",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
